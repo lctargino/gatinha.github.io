@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página com Formulário</title>
+    <style>
+        body {
+            background-color: #f8d7da; /* Rosa clarinho */
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Para esconder elementos fora da tela */
+            font-family: Arial, sans-serif;
+            position: relative; /* Necessário para o posicionamento absoluto dos elementos */
+        }
+        .heart {
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            background-color: #ff69b4; /* Cor rosa */
+            transform: rotate(-45deg);
+            animation: moveHeart 10s ease-in-out infinite;
+            z-index: 0; /* Garante que os corações fiquem atrás do conteúdo da página */
+        }
+        .heart:before,
+        .heart:after {
+            content: "";
+            position: absolute;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: #ff69b4; /* Cor rosa */
+        }
+        .heart:before {
+            top: -15px;
+            left: 0;
+        }
+        .heart:after {
+            top: 0;
+            left: 15px;
+        }
+        @keyframes moveHeart {
+            0% {
+                transform: translateX(0) translateY(0) rotate(-45deg);
+            }
+            25% {
+                transform: translateX(calc(100vw - 30px)) translateY(0) rotate(-45deg);
+            }
+            50% {
+                transform: translateX(calc(100vw - 30px)) translateY(calc(100vh - 30px)) rotate(-45deg);
+            }
+            75% {
+                transform: translateX(0) translateY(calc(100vh - 30px)) rotate(-45deg);
+            }
+            100% {
+                transform: translateX(0) translateY(0) rotate(-45deg);
+            }
+        }
+        .container {
+            position: relative;
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center; /* Centraliza o conteúdo */
+            z-index: 1;
+        }
+        h1 {
+            color: #d63384; /* Cor rosa mais forte para o título */
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+        button {
+            background-color: #d63384; /* Cor rosa para o botão */
+            color: #ffffff;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #c8237d; /* Cor rosa mais escura no hover */
+        }
+        .loading, .result-message {
+            display: none;
+            position: fixed; /* Usar fixed para garantir que fica no centro da tela */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+            z-index: 2;
+            width: 60%; /* Diminuir a largura da div */
+        }
+        .loading p {
+            margin: 0;
+            font-size: 18px;
+        }
+        .loading .spinner {
+            border: 5px solid #f3f3f3; /* Light grey */
+            border-top: 5px solid #d63384; /* Pink */
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        .result-message.success {
+            background-color: #d4edda; /* Verde claro */
+        }
+        .result-message.error {
+            background-color: #f8d7da; /* Rosa claro */
+        }
+        .result-message img, .result-message video {
+            max-width: 50%; /* Diminui o tamanho do vídeo e GIF */
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+        .result-message p {
+            margin: 0;
+            font-size: 24px; /* Tamanho da fonte da mensagem de erro */
+            color: white; /* Cor do texto da mensagem de erro */
+        }
+        .result-message h1 {
+            margin: 0;
+            font-size: 36px; /* Tamanho do título de sucesso */
+            color: #d63384; /* Cor rosa para o título de sucesso */
+        }
+    </style>
+</head>
+<body>
+    <!-- Corações animados -->
+    <div class="heart" style="top: 10%; left: 10%;"></div>
+    <div class="heart" style="top: 20%; left: 50%;"></div>
+    <div class="heart" style="top: 40%; left: 30%;"></div>
+    <!-- Adicione mais corações conforme necessário -->
+
+    <!-- Formulário -->
+    <div class="container" id="form-container">
+        <h1>Formulário</h1>
+        <form id="questionnaire-form">
+            <label for="name">Nome:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="age">Idade:</label>
+            <input type="text" id="age" name="age" required>
+
+            <label for="hairColor">Cor do Cabelo:</label>
+            <input type="text" id="hairColor" name="hairColor" required>
+
+            <button type="submit" id="submit-button">Enviar</button>
+        </form>
+    </div>
+
+    <!-- Mensagem de carregamento -->
+    <div class="loading" id="loading-message">
+        <div class="spinner"></div>
+        <p>Espere um momento, estou pensando 🤔</p>
+    </div>
+
+    <!-- Mensagem de resultado -->
+    <div class="result-message success" id="success-message">
+        <h1>Você é o amor da minha vida!</h1>
+        <p>Informações corretas!</p>
+    </div>
+
+    <div class="result-message error" id="error-message">
+        <p style="font-size: 30px; color: white;">Sai daqui, feiosa. Você não é minha Ana Vitória.</p>
+        <video autoplay muted>
+            <source src="C:/Users/lucas/OneDrive/Imagens/site ana/Bru.mp4" type="video/mp4">
+            Seu navegador não suporta o elemento de vídeo.
+        </video>
+    </div>
+
+    <script>
+        document.getElementById('questionnaire-form').addEventListener('submit', function(event) {
+            event.preventDefault(); // Evita o envio do formulário
+
+            const name = document.getElementById('name').value.toLowerCase();
+            const age = document.getElementById('age').value;
+            const hairColor = document.getElementById('hairColor').value.toLowerCase();
+
+            const correctValues = {
+                name: 'ana vitoria',
+                age: '17',
+                hairColor: 'loiro'
+            };
+
+            // Exibe a mensagem de carregamento
+            document.getElementById('loading-message').style.display = 'block';
+
+            setTimeout(() => {
+                // Esconde a mensagem de carregamento
+                document.getElementById('loading-message').style.display = 'none';
+
+                // Esconde o formulário
+                document.getElementById('form-container').style.display = 'none';
+
+                if (
+                    name === correctValues.name &&
+                    age === correctValues.age &&
+                    hairColor === correctValues.hairColor
+                ) {
+                    // Mostra a mensagem de sucesso
+                    document.getElementById('success-message').style.display = 'block';
+                } else {
+                    // Mostra a mensagem de erro e o vídeo
+                    document.getElementById('error-message').style.display = 'block';
+                }
+            }, 7000); // Tempo de exibição da mensagem de carregamento
+        });
+    </script>
+</body>
+</html>
